@@ -36,6 +36,9 @@
   "main": "./dist/web-logger-react.umd.js",
   "module": "./dist/web-logger-react.es.js",
   "types": "./dist/index.d.ts",
+  "dependencies": {
+    "axios": "1.6.2"
+  },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
