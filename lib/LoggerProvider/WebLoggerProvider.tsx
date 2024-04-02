@@ -1,35 +1,18 @@
 import axios from "axios";
-import { ReactNode, createContext, useContext, useMemo } from "react";
+import { useMemo } from "react";
+
 import {
-  LoggerOptions,
+  LoggerProviderProps,
   defaultLoggerOptions,
   mapLevelToNumber,
-} from "./logger.interface";
+} from "../logger.interface";
+import { LoggerContext } from "../WebLoggerContext";
 
-interface WebLoggerService {
-  alert: (message: string) => void;
-  critical: (message: string) => void;
-  error: (message: string, stackTrace?: string) => void;
-  warning: (message: string) => void;
-  notice: (message: string) => void;
-  info: (message: string) => void;
-  debug: (message: string) => void;
-}
-
-export const WebLoggerContext = createContext<WebLoggerService | null>(null);
-
-interface Props {
-  children: ReactNode;
-  /**
-   * Options to setup connection with log server
-   */
-  options?: Partial<LoggerOptions>;
-  /**
-   * Disable Web Logger service and do not send any message to log server
-   */
-  disable?: boolean;
-}
-export const WebLoggerProvider = ({ children, options, disable }: Props) => {
+export const WebLoggerProvider = ({
+  children,
+  options,
+  disable,
+}: LoggerProviderProps) => {
   const axiosInstance = useMemo(() => {
     const axiosOptions = {
       ...defaultLoggerOptions,
@@ -57,7 +40,7 @@ export const WebLoggerProvider = ({ children, options, disable }: Props) => {
     try {
       await axiosInstance.post("/gelf", payload);
     } catch (e) {
-      console.error(e);
+      console.error("Failed to send message", payload, e);
     }
   };
 
@@ -91,21 +74,10 @@ export const WebLoggerProvider = ({ children, options, disable }: Props) => {
   };
 
   return (
-    <WebLoggerContext.Provider
+    <LoggerContext.Provider
       value={{ alert, critical, error, warning, notice, info, debug }}
     >
       {children}
-    </WebLoggerContext.Provider>
+    </LoggerContext.Provider>
   );
-};
-
-export const useWebLoggerContext = () => {
-  const context = useContext(WebLoggerContext);
-
-  if (context === null)
-    throw new Error(
-      "useWebLoggerContext must be used within WebLoggerProvider component!"
-    );
-
-  return context;
 };
