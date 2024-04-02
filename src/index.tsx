@@ -1,10 +1,11 @@
-import { WebLoggerProvider, useWebLoggerContext } from "lib";
 import { useState } from "react";
 import ReactDOM from "react-dom/client";
+import { LoggerProvider, useLogger } from "../lib";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <div>
-    <WebLoggerProvider
+    <LoggerProvider
+      type="EXTERNAL"
       options={{
         host: "http://localhost:3000",
         logLevel: "WARNING",
@@ -12,7 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       }}
     >
       <ReactLogger />
-    </WebLoggerProvider>
+    </LoggerProvider>
   </div>
 );
 
@@ -22,7 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
  * @returns
  */
 function ReactLogger() {
-  const logger = useWebLoggerContext();
+  const logger = useLogger();
   const [logLevel, setLogLevel] = useState<string>("");
   const [message, setMessage] = useState<string>("");
 

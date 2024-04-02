@@ -1,3 +1,5 @@
+import { ReactNode } from "react"
+
 type LogLevel =
   | "ALERT"
   | "CRITICAL"
@@ -41,3 +43,25 @@ export const defaultLoggerOptions: LoggerOptions = {
   host: "http://localhost:3003",
   logLevel: "INFO",
 };
+
+export interface LoggerService {
+  alert: (message: string) => void;
+  critical: (message: string) => void;
+  error: (message: string, stackTrace?: string) => void;
+  warning: (message: string) => void;
+  notice: (message: string) => void;
+  info: (message: string) => void;
+  debug: (message: string) => void;
+}
+
+export interface LoggerProviderProps {
+  children: ReactNode;
+  /**
+   * Options to setup connection with log server
+   */
+  options?: Partial<LoggerOptions>;
+  /**
+   * Disable Web Logger service and do not send any message to log server
+   */
+  disable?: boolean;
+}
